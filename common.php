@@ -1,4 +1,11 @@
 <?php
+echo "<pre>";
+print_r($_SESSION);
+print_r($_POST);
+echo "</pre>";
+?>
+
+<?php
 require "instructorFunc.php";
 require "studentFunc.php";
 
@@ -17,9 +24,10 @@ echo '
         <form action="common.php" method="POST">
             <input type="text" name="username" id="usernameInput">
             <input type="password" name="password" id="passwordInput">
-            <input type="submit" name="instructorLogin" id="login" value="Login">
+            <input type="submit" name="studentLogin" id="login" value="Login">
         </form>
         ';
+        $_SESSION["role"] = "student";
     } else {
         echo '<p>Welcome to the instructor login!</.p>';
         echo '
@@ -29,6 +37,7 @@ echo '
             <input type="submit" name="instructorLogin" id="login" value="Login">
         </form>
         ';
+        $_SESSION["role"] = "instructor";
     }
 echo '       
         <form action="common.php" method="post">
@@ -40,7 +49,8 @@ echo '
 ';
 
 if(isset($_POST["instructorLogin"])){
-    if($_POST["username"] == "wmisip" && $_POST["password"] == "wmisip"){
+    if(instructorAuth($_POST["username"], $_POST["password"]) == 1){
+        $_SESSION["username"] = $_POST["username"];
         header("LOCATION:main.html");
         return;
     } else {
@@ -49,7 +59,8 @@ if(isset($_POST["instructorLogin"])){
 }
 
 if(isset($_POST["studentLogin"])){
-    if($_POST["username"] == "eljones" && $_POST["password"] == "eljones"){
+    if(studentAuth($_POST["username"], $_POST["password"]) == 1){
+        $_SESSION["username"] = $_POST["username"];
         header("LOCATION:main.html");
         return;
     } else {
