@@ -15,6 +15,7 @@ function instructorAuth($username, $password)
 {
     try {
         $dbh = connectDB();
+
         $statement = $dbh->prepare("SELECT count(*) FROM instructor " .
             "WHERE account_name = :username AND password = sha2(:password,256) ");
 
@@ -22,6 +23,7 @@ function instructorAuth($username, $password)
         $statement->bindParam(":password", $password);
         $result = $statement->execute();
         $row = $statement->fetch();
+
         $dbh = null;
 
         return $row[0];
@@ -49,4 +51,24 @@ function studentAuth($username, $password)
         die();
     }
 }
+?>
+
+<?php
+    function isInstructorEnabled($username){
+        try{
+        $dbh = connectDB();
+
+        $statement = $dbh->prepare("SELECT enabled FROM instructor " .
+            "WHERE account_name = :username ");
+        $statement->bindParam(":username", $username);
+        $result = $statement->execute();
+        $check = $statement->fetch();
+
+        return $check[0];
+
+        } catch (PDOException $e){
+            print "Error!" . $e->getMessage() . "<br>";
+            die();
+        }
+    }
 ?>
