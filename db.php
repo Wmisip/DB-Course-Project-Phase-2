@@ -32,7 +32,10 @@ function instructorAuth($username, $password)
         die();
     }
 }
+?>
 
+
+<?php
 function studentAuth($username, $password)
 {
     try {
@@ -70,5 +73,62 @@ function studentAuth($username, $password)
             print "Error!" . $e->getMessage() . "<br>";
             die();
         }
+    }
+?>
+
+<?php
+    function isStudentEnabled($username){
+        try{
+        $dbh = connectDB();
+
+        $statement = $dbh->prepare("SELECT enabled FROM student " .
+            "WHERE account_name = :username ");
+        $statement->bindParam(":username", $username);
+        $result = $statement->execute();
+        $check = $statement->fetch();
+
+        return $check[0];
+
+        } catch (PDOException $e){
+            print "Error!" . $e->getMessage() . "<br>";
+            die();
+        }
+    }
+?>
+
+<?php
+    function resetPassword($username, $password){
+        try{
+            $dbh = connectDB();
+            
+            if($_SESSION["role"] == "student"){
+
+            $statement = $dbh->prepare("UPDATE student " . "SET password = sha2(:password,256) " . 
+                "WHERE account_name = :username ");
+            $statement->bindParam(":username", $username);
+            $statement->bindParam(":password", $password);
+            $result = $statement->execute();
+
+            $dbh = null;
+
+            return;
+        }   
+        elseif($_SESSION["role"] == "instructor"){
+
+            $statement = $dbh->prepare("UPDATE instructor " . "SET password = sha2(:password,256) " . 
+                "WHERE account_name = :username ");
+            $statement->bindParam(":username", $username);
+            $statement->bindParam(":password", $password);
+            $result = $statement->execute();
+
+            $dbh = null;
+
+            return;
+        }
+    
+            } catch (PDOException $e){
+                print "Error!" . $e->getMessage() . "<br>";
+                die();
+            }
     }
 ?>
