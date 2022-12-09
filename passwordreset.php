@@ -1,3 +1,7 @@
+<?php
+    session_start();
+?>
+
 <html>
 
 <head>
@@ -6,11 +10,17 @@
 
 <body>
     <?php
-        echo $_SESSION["enabled"];
-        echo $_SESSION["role"];
-        echo $_SESSION["username"];
+        echo "<pre>";
+        print_r($_SESSION);
+        print_r($_POST);
+        echo "</pre>";
     ?>
-    <p>Welcome, it's your first time logging in! Please reset your password to continue</p>;
+    <?php
+    echo "
+    <p>Welcome, " . $_SESSION["role"] . " it's your first time logging in! Please reset your password to continue</p>
+    ";
+    ?>
+
     <?php
     echo '
     <form action="passwordreset.php" method="POST">
@@ -19,6 +29,9 @@
         <br>
         <label for="confirmPassword">Confirm Password:</label>
         <input type="password" name="confirmPassword" id="password_box">
+        <br>
+        <input type="submit" name="newPasswordSubmit" value="Submit">
+      
     </form>
         ';
     ?>
@@ -29,11 +42,19 @@
 <?php
     require "db.php";
 
-    if($_POST["password"] == $_POST["confirmPassword"]){
+    if(isset($_POST["newPasswordSubmit"])){
+        if($_POST["password"] == $_POST["confirmPassword"]){
+        echo 'passwords the same';
         resetPassword($_SESSION["username"], $_POST["password"]);
-        header("REDIRECT:main.php");
-    }else{
-        echo '<p style="color: red">Password not the same!</p>';
+        if(isEnabled($_SESSION["username"]) == true){
+            $_SESSION["enabled"] = "true";
+        } else{
+            echo '<p style="color: red">Problem resetting password!</p>';
+        }
+        header("LOCATION:main.php");
+        }
+        else{
+            echo '<p style="color: red">Password not the same!</p>';
+        }
     }
-
 ?>
