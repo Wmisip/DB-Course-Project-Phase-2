@@ -1,5 +1,6 @@
 <?php
     session_start();
+
 ?>
 
 <?php
@@ -11,7 +12,7 @@ echo '
 
     </head>
     <body>';
-    if(isset($_POST["student"]) || $_SESSION["role"] == "student"){
+    if(isset($_POST["student"]) || (isset($_SESSION["role"]) && $_SESSION["role"] == "student") ){
         $_SESSION["role"] = "student";
         echo '<p>Welcome to the student login!</p>';
         echo '
@@ -23,7 +24,7 @@ echo '
             <input type="submit" name="Login" id="login" value="Login">
         </form>
         ';
-    } elseif(isset($_POST["instructor"])  || $_SESSION["role"] == "instructor") {
+    } elseif(isset($_POST["instructor"])  || (isset($_SESSION["role"]) && $_SESSION["role"] == "instructor")) {
         $_SESSION["role"] = "instructor";
         echo '<p>Welcome to the instructor login!</p>';
         echo '
