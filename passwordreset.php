@@ -1,4 +1,5 @@
 <?php
+    require "common.php";
     session_start();
 ?>
 
@@ -40,7 +41,6 @@
 </html>
 
 <?php
-    require "db.php";
 
     if(isset($_POST["newPasswordSubmit"])){
         if($_POST["password"] == $_POST["confirmPassword"]){
