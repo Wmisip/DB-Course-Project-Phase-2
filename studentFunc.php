@@ -4,6 +4,7 @@
 
 <html>
 <body>
+
 <form action = "studentFunc.php" method = "get">
     <p> Course Id: <input type = "text" name = "courseId"/> </p>
     <p> Exam name: <input type = "text" name = "examName"/> </p>
@@ -20,11 +21,12 @@
     $examname = $_GET['examName'];
     $dbh = connectDB();
 
-    if (isset($_GET['regstrCourse'])) {
+    if (isset($_GET['regstrCourse'])) {                 // need to check if things exist for each button
         printf("You have been added to %s \n",
             htmlspecialchars($_GET['courseId']));
         $stmt = $dbh->prepare('INSERT INTO register (course_id, student_id) VALUES (:courseId, :)');
-        $stmt -> execute([$courseid, $examname]);    // how to grab student id?
+        $stmt -> execute([$courseid, $examname]);       // needs to grab student id
+                                                        // select sID from student where username = acct_name
     } elseif (isset($_GET['takeExam'])){
         // take an exam
     } else {
