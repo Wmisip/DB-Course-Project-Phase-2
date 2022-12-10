@@ -15,13 +15,19 @@
 </html>
 
 <?php
-if (isset($_GET['regstrCourse'])) {
-    printf("You have been added to %s \n",
-        htmlspecialchars($_GET['courseId']));
-    // add to course
-} elseif (isset($_GET['takeExam'])){
-    // take an exam
-} else {
-    // open up exam questions, answers, and score
-}
+    require "db.php";
+    $courseid = $_GET['courseId'];
+    $examname = $_GET['examName'];
+    $dbh = connectDB();
+
+    if (isset($_GET['regstrCourse'])) {
+        printf("You have been added to %s \n",
+            htmlspecialchars($_GET['courseId']));
+        $stmt = $dbh->prepare('INSERT INTO register (course_id, student_id) VALUES (:courseId, :)');
+        $stmt -> execute([$courseid, $examname]);    // how to grab student id?
+    } elseif (isset($_GET['takeExam'])){
+        // take an exam
+    } else {
+        // check an exam, with a students answers, the correct answer, and the point per question
+    }
 ?>
