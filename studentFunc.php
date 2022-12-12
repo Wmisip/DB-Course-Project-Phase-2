@@ -25,21 +25,11 @@
 
 
     if (isset($_GET['regstrCourse'])) {
-        try {
-            $dbh = connectDB();
- //       $stmt = $dbh->prepare('SELECT student_id FROM student WHERE account_name = ');
-
-        $stmt = $dbh->prepare('INSERT INTO register (course_id, student_id) VALUES (:courseId, :)');
-        $stmt -> execute([$courseid, $examname]);       // needs to grab student id
-                                                        // select sID from student where username = acct_name
-        printf("You have been added to %s \n",
-            htmlspecialchars($_GET['courseId']));
 
 
-        } catch (PDOException $e) {
-            print "Error!" . $e->getMessage() . "<br>";
-            die();
-        }
+
+
+
 
     } else {
         // take an exam
@@ -69,43 +59,62 @@ session_start();
     function reviewExam($courseID, $examName) {
         try {
             $dbh = connectDB();
-            $stmt = $dbh->prepare('SELECT
-            open,
-            closed,
-            choice.question_num,
-            question.description,
-            answer,
-            correct,
-            question.points
-            FROM chooses LEFT OUTER JOIN choice ON
-                choice.course_id = chooses.course_id AND
-                choice.exam_name = chooses.exam_name AND
-                chooses.answer = choice.choice AND
-                chooses.question_num = choice.question_num
-            LEFT OUTER JOIN exam ON
-                exam.course_id = choice.course_id AND
-                exam.exam_name = choice.exam_name
-            LEFT OUTER JOIN question ON
-	            question.course_id = exam.course_id AND
-                question.exam_name = exam.exam_name
-            WHERE account_name LIKE :username AND 
-                choice.exam_name = :examName AND 
-                choice.course_id = :courseId');
-            $stmt -> bindParam(":username", $_SESSION['username']);
-            $stmt -> bindParam(":examName", $examname);
-            $stmt -> bindParam(":courseid", $courseid);
-            $stmt -> execute([$courseid, $examname]);
 
-            $dbh = null;
+        $stmt = $dbh->prepare('SELECT
+        open,
+        closed,
+        choice.question_num,
+        question.description,
+        answer,
+        correct,
+        question.points
+        FROM chooses LEFT OUTER JOIN choice ON
+            choice.course_id = chooses.course_id AND
+            choice.exam_name = chooses.exam_name AND
+            chooses.answer = choice.choice AND
+            chooses.question_num = choice.question_num
+        LEFT OUTER JOIN exam ON
+            exam.course_id = choice.course_id AND
+            exam.exam_name = choice.exam_name
+        LEFT OUTER JOIN question ON
+            question.course_id = exam.course_id AND
+            question.exam_name = exam.exam_name
+        WHERE account_name LIKE :username AND 
+            choice.exam_name = :examName AND 
+            choice.course_id = :courseId');
+        $stmt -> bindParam(":username", $_SESSION['username']);
+        $stmt -> bindParam(":examName", $examname);
+        $stmt -> bindParam(":courseid", $courseid);
+        $stmt -> execute([$courseid, $examname]);
 
-            return $stmt->fetchAll();
+        $dbh = null;
+
+        return $stmt->fetchAll();
 
         } catch (PDOException $e) {
             print "Error!" . $e->getMessage() . "<br>";
             die();
         }
-        // check an exam, with a students answers, the correct answer, and the point per question
     }
+
+    function registerForCourse($username, $courseID) {
+        try {
+            $dbh = connectDB();
+            $stmt = $dbh->prepare('SELECT student_id FROM student WHERE account_name LIKE :username ');
+            $stmt -> bindParam(":username", $_SESSION['username']);
+            $stmt -> execute([$username]);
+            $studentID = $stmt -> fetchAll();
+
+            $stmt = $dbh->prepare('INSERT INTO register (course_id, student_id) VALUES (:courseId, :)');
+            $stmt -> bindParam(":course_id", $courseID);
+            $stmt -> bindParam("student_id", $studentID);
+            $stmt -> execute([$courseID, $studentID]);
+
+        } catch (PDOException $e) {
+            print "Error!" . $e->getMessage() . "<br>";
+            die();
+        }
+    }
+
+
 ?>
-
-
