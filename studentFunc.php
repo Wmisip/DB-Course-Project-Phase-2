@@ -19,14 +19,14 @@
     require "db.php";
     require
     $courseid = $_GET['courseId'];
-    $examname = $_GET['examName'];
-    $dbh = connectDB();             // need to check if things exist for each button
+    $examname = $_GET['examName'];        // need to check if things exist for each button
 
 
 
 
     if (isset($_GET['regstrCourse'])) {
-
+        try {
+            $dbh = connectDB();
  //       $stmt = $dbh->prepare('SELECT student_id FROM student WHERE account_name = ');
 
         $stmt = $dbh->prepare('INSERT INTO register (course_id, student_id) VALUES (:courseId, :)');
@@ -36,16 +36,40 @@
             htmlspecialchars($_GET['courseId']));
 
 
-
-
-    } elseif (isset($_GET['takeExam'])){
-        // take an exam
-
-
-
+        } catch (PDOException $e) {
+            print "Error!" . $e->getMessage() . "<br>";
+            die();
+        }
 
     } else {
-        $stmt = $dbh->prepare('SELECT
+        // take an exam
+    }
+
+    ?>
+
+
+<?php
+require "db.php";
+session_start();
+?>
+
+<style>
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
+</style>
+
+<html>
+</html>
+
+
+<?php
+    function reviewExam($courseID, $examName) {
+        try {
+            $dbh = connectDB();
+            $stmt = $dbh->prepare('SELECT
             open,
             closed,
             choice.question_num,
@@ -64,15 +88,24 @@
             LEFT OUTER JOIN question ON
 	            question.course_id = exam.course_id AND
                 question.exam_name = exam.exam_name
-            WHERE student_id = :studentid AND 
+            WHERE account_name LIKE :username AND 
                 choice.exam_name = :examName AND 
                 choice.course_id = :courseId');
-        $stmt->bindParam(":studentid", $_SESSION['studentid']);  // correct???
-        $stmt->bindParam(":examName", $examname);
-        $stmt->bindParam(":courseid", $courseid);
-        $stmt -> execute([$courseid, $examname]);
+            $stmt -> bindParam(":username", $_SESSION['username']);
+            $stmt -> bindParam(":examName", $examname);
+            $stmt -> bindParam(":courseid", $courseid);
+            $stmt -> execute([$courseid, $examname]);
 
+            $dbh = null;
 
+            return $stmt->fetchAll();
+
+        } catch (PDOException $e) {
+            print "Error!" . $e->getMessage() . "<br>";
+            die();
+        }
         // check an exam, with a students answers, the correct answer, and the point per question
     }
 ?>
+
+
