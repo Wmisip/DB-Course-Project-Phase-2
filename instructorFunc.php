@@ -19,8 +19,9 @@ session_start();
 <body>
     <div>
     <?php
+    if($_POST["courseID"] != "" && $_POST["examName"] != ""){
     if(isset($_POST["reviewExam"])){
-        echo '<p>Here are questions for exam midterm';
+        echo '<p>Here are questions for ' . $_POST["examName"];
 
     } elseif(isset($_POST["checkScore"])){
     echo '<br>';
@@ -83,6 +84,9 @@ session_start();
     } else{
     header("LOCATION:main.php");
     }
+}   else{
+    header("LOCATION:main.php");
+}
     echo '<br>';
     echo '
     <form action="instructorFunc.php" method="POST">
@@ -174,5 +178,13 @@ session_start();
             print "Error!" . $e->getMessage() . "<br>";
             die();
         }
+    }
+
+    function getQuestions($courseID, $examName){
+
+    }
+
+    function getChoices($courseID, $examName){
+        
     }
 ?>

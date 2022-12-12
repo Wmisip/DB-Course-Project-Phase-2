@@ -75,10 +75,10 @@ echo "</pre>";
             
             <form action="instructorFunc.php" method="POST">
                 <label for="courseID">Course: </label>
-                <input type="text" name="courseID" id="textbox" value="courseID">
+                <input type="text" name="courseID" id="textbox">
                 <br>
                 <label for="examName">Exam: </label>
-                <input type="text" name="examName" id="textbox" value="examName">
+                <input type="text" name="examName" id="textbox">
                 <br>
                 <br>
                 <input type="submit" name="checkScore" id="submitBtn" value="Check Score">
@@ -152,3 +152,4 @@ if (isset($_POST["logout"])) {
     header("LOCATION:login.php");
     }
 ?>
+

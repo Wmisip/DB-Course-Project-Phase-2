@@ -12,7 +12,7 @@ echo '
 
     </head>
     <body>';
-    if(isset($_POST["student"]) || (isset($_SESSION["role"]) && $_SESSION["role"] == "student") ){
+    if(isset($_POST["student"])){
         $_SESSION["role"] = "student";
         echo '<p>Welcome to the student login!</p>';
         echo '
@@ -24,7 +24,7 @@ echo '
             <input type="submit" name="Login" id="login" value="Login">
         </form>
         ';
-    } elseif(isset($_POST["instructor"])  || (isset($_SESSION["role"]) && $_SESSION["role"] == "instructor")) {
+    } elseif(isset($_POST["instructor"])) {
         $_SESSION["role"] = "instructor";
         echo '<p>Welcome to the instructor login!</p>';
         echo '
@@ -36,7 +36,32 @@ echo '
             <input type="submit" name="Login" id="login" value="Login">
         </form>
         ';
-    } else{
+    }elseif((isset($_SESSION["role"]) && $_SESSION["role"] == "student") ){
+        $_SESSION["role"] = "student";
+        echo '<p>Welcome to the student login!</p>';
+        echo '
+        <form action="login.php" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="usernameInput"> <br>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="passwordInput"> <br>
+            <input type="submit" name="Login" id="login" value="Login">
+        </form>
+        ';
+    } else if( (isset($_SESSION["role"]) && $_SESSION["role"] == "instructor")){
+        $_SESSION["role"] = "instructor";
+        echo '<p>Welcome to the instructor login!</p>';
+        echo '
+        <form action="login.php" method="POST">
+        <label for="username">Username:</label>
+            <input type="text" name="username" id="usernameInput"> <br>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="passwordInput"> <br>
+            <input type="submit" name="Login" id="login" value="Login">
+        </form>
+        ';
+    }
+    else{
     echo '<p>Welcome to the login portal, are you an instructor or a student?</p><br>';
     }
 echo '       
