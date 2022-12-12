@@ -9,6 +9,17 @@ session_start();
     td {
         border: 1px solid black;
     }
+        .tab1 {
+            tab-size: 2;
+        }
+  
+        .tab2 {
+            tab-size: 4;
+        }
+  
+        .tab4 {
+            tab-size: 8;
+        }
 </style>
 
 <html>
@@ -22,7 +33,24 @@ session_start();
     if($_POST["courseID"] != "" && $_POST["examName"] != ""){
     if(isset($_POST["reviewExam"])){
         echo '<p>Here are questions for ' . $_POST["examName"];
+            echo '<br>';
+            echo '<br>';
+            echo '<div>';
+            $questions = getQuestions($_POST["courseID"], $_POST["examName"]);
 
+            foreach ($questions as $question) {
+                $options = getChoices($_POST["courseID"], $_POST["examName"], $question[0]);
+                echo '<b style="font-size: larger;">' . $question[0] . ": " . $question[1] . " (" . $question[2] . " points)" . "</b>";
+                foreach($options as $option){
+                    // echo "<br>";
+                    echo '<p style="padding-left: 2%;">' . $option[0] . ": " . $option[1];
+                    if($option[2] == "1"){
+                        echo ' (Correct)';
+                    }
+                    echo '</p>';
+                }
+            }
+        echo '</div>';
     } elseif(isset($_POST["checkScore"])){
     echo '<br>';
     echo '<div>';
@@ -181,10 +209,54 @@ session_start();
     }
 
     function getQuestions($courseID, $examName){
+        try {
+            $dbh = connectDB();
+    
+        $statement = $dbh->prepare("SELECT 
+        question_num, 
+        description, 
+        points 
+        FROM question
+        WHERE course_id = :courseID AND exam_name = :examName
+        ORDER BY question_num ASC");
+    
+        $statement->bindParam(":courseID", $courseID);
+        $statement->bindParam(":examName", $examName);
+        $statement->execute();
 
+        $dbh = null;
+
+        return $statement->fetchAll();
+
+        } catch (PDOException $e) {
+            print "Error!" . $e->getMessage() . "<br>";
+            die();
+        }
     }
 
-    function getChoices($courseID, $examName){
-        
+    function getChoices($courseID, $examName, $questionNum){
+        try {
+            $dbh = connectDB();
+    
+        $statement = $dbh->prepare("SELECT 
+        choice, 
+        description, 
+        correct 
+        FROM choice
+        WHERE course_id = :courseID AND exam_name = :examName AND question_num = :questionNum");
+    
+        $statement->bindParam(":courseID", $courseID);
+        $statement->bindParam(":examName", $examName);
+        $statement->bindParam("questionNum", $questionNum);
+        $statement->execute();
+
+        $dbh = null;
+
+        return $statement->fetchAll();
+
+        } catch (PDOException $e) {
+            print "Error!" . $e->getMessage() . "<br>";
+            die();
+        }
     }
 ?>
