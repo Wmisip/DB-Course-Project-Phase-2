@@ -22,7 +22,11 @@
     $examname = $_GET['examName'];
     $dbh = connectDB();             // need to check if things exist for each button
 
+
+
+
     if (isset($_GET['regstrCourse'])) {
+
  //       $stmt = $dbh->prepare('SELECT student_id FROM student WHERE account_name = ');
 
         $stmt = $dbh->prepare('INSERT INTO register (course_id, student_id) VALUES (:courseId, :)');
@@ -31,8 +35,14 @@
         printf("You have been added to %s \n",
             htmlspecialchars($_GET['courseId']));
 
+
+
+
     } elseif (isset($_GET['takeExam'])){
         // take an exam
+
+
+
 
     } else {
         $stmt = $dbh->prepare('SELECT
@@ -43,8 +53,7 @@
             answer,
             correct,
             question.points
-            FROM
-            chooses LEFT OUTER JOIN choice ON
+            FROM chooses LEFT OUTER JOIN choice ON
                 choice.course_id = chooses.course_id AND
                 choice.exam_name = chooses.exam_name AND
                 chooses.answer = choice.choice AND
@@ -55,7 +64,15 @@
             LEFT OUTER JOIN question ON
 	            question.course_id = exam.course_id AND
                 question.exam_name = exam.exam_name
-            WHERE student_id =  AND choice.exam_name = :examName AND choice.course_id = :courseId');  // NEED TO GRAB STUDENT ID
+            WHERE student_id = :studentid AND 
+                choice.exam_name = :examName AND 
+                choice.course_id = :courseId');
+        $stmt->bindParam(":studentid", $_SESSION['studentid']);  // correct???
+        $stmt->bindParam(":examName", $examname);
+        $stmt->bindParam(":courseid", $courseid);
+        $stmt -> execute([$courseid, $examname]);
+
+
         // check an exam, with a students answers, the correct answer, and the point per question
     }
 ?>
