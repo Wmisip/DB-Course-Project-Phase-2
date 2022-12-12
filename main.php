@@ -73,7 +73,7 @@ echo "</pre>";
             <div>
             <p>Please enter the CourseID and Exam Name to view the scores of students.</p>
             
-            <form action="main.php" method="POST">
+            <form action="instructorFunc.php" method="POST">
                 <label for="courseID">Course: </label>
                 <input type="text" name="courseID" id="textbox" value="courseID">
                 <br>
