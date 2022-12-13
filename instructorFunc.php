@@ -4,23 +4,16 @@ session_start();
 ?>
 
 <style>
+<?php include 'CSS/main.css'; ?>
+</style>
+
+<!-- <style>
     table,
     th,
     td {
         border: 1px solid black;
     }
-        .tab1 {
-            tab-size: 2;
-        }
-  
-        .tab2 {
-            tab-size: 4;
-        }
-  
-        .tab4 {
-            tab-size: 8;
-        }
-</style>
+</style> -->
 
 <html>
     <head>
@@ -118,7 +111,7 @@ session_start();
     echo '<br>';
     echo '
     <form action="instructorFunc.php" method="POST">
-    <input type="submit" name="goBack" id="submitBtn" value="Go Back">
+    <input type="submit" name="goBack" class="submitBtn" value="Go Back">
     </form>
     ';
 
@@ -148,18 +141,15 @@ session_start();
         min(grade) as min,
         max(grade) as max,
         avg(grade) as average
-        from
-        course NATURAL JOIN 
-        teaches NATURAL JOIN 
+        from 
         instructor NATURAL JOIN
         (select count(student_id) as total 
-        from register group by course_id)reg
+        from register WHERE course_id like :courseID group by course_id )reg
         NATURAL JOIN takes
-        WHERE account_name like :username AND course_id like :courseID AND exam_name like :examName
+        WHERE course_id like :courseID AND exam_name like :examName
         GROUP BY course_id, reg.total, exam_name
         ORDER BY course_id, exam_name ASC");
     
-        $statement->bindParam(":username", $_SESSION['username']);
         $statement->bindParam(":courseID", $courseID);
         $statement->bindParam(":examName", $examName);
         $statement->execute();

@@ -3,6 +3,10 @@
     session_start();
 ?>
 
+<style>
+<?php include 'CSS/main.css'; ?>
+</style>
+
 <html>
 
 <head>
@@ -26,10 +30,10 @@
     echo '
     <form action="passwordreset.php" method="POST">
         <label for="password">New Password:</label>
-        <input type="password" name="password" id="password_box" >
+        <input type="password" name="password" class="password_box" >
         <br>
         <label for="confirmPassword">Confirm Password:</label>
-        <input type="password" name="confirmPassword" id="password_box">
+        <input type="password" name="confirmPassword" class="password_box">
         <br>
         <input type="submit" name="newPasswordSubmit" value="Submit">
       

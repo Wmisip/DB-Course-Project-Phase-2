@@ -34,22 +34,22 @@ if (isset($_POST["submit"])) {
 
 			<div class="option">
 				<label for="Q1A">A: is too slow</label>
-				<input type="radio" id="Q1A" name="Q1" value="A"><br>
+				<input type="radio" class="Q1A" name="Q1" value="A"><br>
 			</div>
 
 			<div class="option">
 				<label for="Q1B">B: is just right</label>
-				<input type="radio" id="Q1B" name="Q1" value="B"><br>
+				<input type="radio" class="Q1B" name="Q1" value="B"><br>
 			</div>
 
 			<div class="option">
 				<label for="Q1C">C: is too fast</label>
-				<input type="radio" id="Q1C" name="Q1" value="C"><br>
+				<input type="radio" class="Q1C" name="Q1" value="C"><br>
 			</div>
 
 			<div class="option">
 				<label for="Q1D">D: I don't know</label>
-				<input type="radio" id="Q1D" name="Q1" value="D">
+				<input type="radio" class="Q1D" name="Q1" value="D">
 			</div>
 
 		</div>
@@ -61,16 +61,16 @@ if (isset($_POST["submit"])) {
 
 			<div class="option">
 				<label for="Q2A">A: too few</label>
-				<input type="radio" id="Q1A" name="Q2" value="A"><br>
+				<input type="radio" class="Q1A" name="Q2" value="A"><br>
 			</div>
 			<div class="option">
 				<label for="Q2B">B: sufficient</label>
-				<input type="radio" id="Q2B" name="Q2" value="B"><br>
+				<input type="radio" class="Q2B" name="Q2" value="B"><br>
 			</div>
 			<div class="option">
 
 				<label for="Q2C">C: I don't know</label>
-				<input type="radio" id="Q2C" name="Q2" value="C">
+				<input type="radio" class="Q2C" name="Q2" value="C">
 			</div>
 		</div>
 		<!-- <br>
@@ -78,13 +78,13 @@ if (isset($_POST["submit"])) {
 
 		<div class="questionBlock">
 			<label class="question" for="Q3text">Q3: Any thing you like about the teaching of this course?</label><br>
-			<textarea id="Q3text" name="Q3"></textarea>
+			<textarea class="Q3text" name="Q3"></textarea>
 		</div>
 
 		<!-- <br>
 		<br> -->
 
-		<input type="submit" value="Submit" name="submit" id="submit">
+		<input type="submit" value="Submit" name="submit" class="submit">
 	</form>
 
 

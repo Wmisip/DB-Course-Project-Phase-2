@@ -3,6 +3,10 @@
 
 ?>
 
+<style>
+<?php include 'CSS/main.css'; ?>
+</style>
+
 <?php
 require "common.php";
 
@@ -18,10 +22,10 @@ echo '
         echo '
         <form action="login.php" method="POST">
             <label for="username">Username:</label>
-            <input type="text" name="username" id="usernameInput"> <br>
+            <input type="text" name="username" class="usernameInput"> <br>
             <label for="password">Password:</label>
-            <input type="password" name="password" id="passwordInput"> <br>
-            <input type="submit" name="Login" id="login" value="Login">
+            <input type="password" name="password" class="passwordInput"> <br>
+            <input type="submit" name="Login" class="submitBtn" value="Login">
         </form>
         ';
     } elseif(isset($_POST["instructor"])) {
@@ -30,10 +34,10 @@ echo '
         echo '
         <form action="login.php" method="POST">
         <label for="username">Username:</label>
-            <input type="text" name="username" id="usernameInput"> <br>
+            <input type="text" name="username" class="usernameInput"> <br>
             <label for="password">Password:</label>
-            <input type="password" name="password" id="passwordInput"> <br>
-            <input type="submit" name="Login" id="login" value="Login">
+            <input type="password" name="password" class="passwordInput"> <br>
+            <input type="submit" name="Login" class="submitBtn" value="Login">
         </form>
         ';
     }elseif((isset($_SESSION["role"]) && $_SESSION["role"] == "student") ){
@@ -42,10 +46,10 @@ echo '
         echo '
         <form action="login.php" method="POST">
             <label for="username">Username:</label>
-            <input type="text" name="username" id="usernameInput"> <br>
+            <input type="text" name="username" class="usernameInput"> <br>
             <label for="password">Password:</label>
-            <input type="password" name="password" id="passwordInput"> <br>
-            <input type="submit" name="Login" id="login" value="Login">
+            <input type="password" name="password" class="passwordInput"> <br>
+            <input type="submit" name="Login" class="submitBtn" value="Login">
         </form>
         ';
     } else if( (isset($_SESSION["role"]) && $_SESSION["role"] == "instructor")){
@@ -54,10 +58,10 @@ echo '
         echo '
         <form action="login.php" method="POST">
         <label for="username">Username:</label>
-            <input type="text" name="username" id="usernameInput"> <br>
+            <input type="text" name="username" class="usernameInput"> <br>
             <label for="password">Password:</label>
-            <input type="password" name="password" id="passwordInput"> <br>
-            <input type="submit" name="Login" id="login" value="Login">
+            <input type="password" name="password" class="passwordInput"> <br>
+            <input type="submit" name="Login" class="submitBtn" value="Login">
         </form>
         ';
     }
@@ -66,8 +70,8 @@ echo '
     }
 echo '       
         <form action="login.php" method="post">
-        <input type="submit" name="instructor" value="Instructor">
-        <input type="submit" name="student" value="Student">
+        <input type="submit" name="instructor" class="submitBtn" value="Instructor">
+        <input type="submit" name="student" class="submitBtn" value="Student">
     </form>
     </body>
 </html>
