@@ -2,155 +2,8 @@
     require "db.php";
     session_start();
 ?>
-
-<style>
-<?php include 'CSS/main.css'; ?>
-</style>
-
-<!-- <style>
-    table,
-    th,
-    td {
-        border: 1px solid black;
-    }
-</style> -->
-
 <html>
 <body>
-
-<!-- <form action = "studentFunc.php" method = "POST">
-    <p> Course class: <input type = "text" name = "courseId"/> </p>
-    <p> Exam name: <input type = "text" name = "examName"/> </p>
-    <p> <input type = "submit" name = "regstrCourse" value = "Register for course"/>
-    <input type = "submit" name = "takeExam" value = "Take Exam"/>
-    <input type = "submit" name = "checkExam" value = "Check Exam"/> </p> -->
-
-
-
-<?php
-    // require
-    // $courseid = $_GET['courseId'];
-    // $examname = $_GET['examName'];        // need to check if things exist for each button
-
-
-
-
-    if (isset($_POST['registerForCourse'])) {
-        registerForCourse($_POST["courseID"]);
-        echo '<p>You have signed up for, ' . $_POST["courseID"] . '</p>';
-        echo '
-        <form action="instructorFunc.php" method="POST">
-        <input type="submit" name="goBack" class="submitBtn" value="Go Back">
-        </form>
-        ';
-
-    }elseif(isset($_POST['takeExam'])){
-        if(isExamOpen($_POST["courseID"], $_POST["examName"]) == 0){
-            $_SESSION["startTime"] = strtotime(date('Y-m-d H:i:s'));
-            $_SESSION["courseID"] = $_POST["courseID"];
-            $_SESSION["examName"] = $_POST["examName"];
-                echo '<p>Here are questions for ' . $_POST["examName"] . ". Click Submit after you finish";
-                    echo '<br>';
-                    echo '<div>';
-                    $questions = getQuestions($_POST["courseID"], $_POST["examName"]);
-        
-                    echo '<form action="studentFunc.php" method="POST">';
-                    foreach ($questions as $question) {
-                        $options = getChoices($_POST["courseID"], $_POST["examName"], $question[0]);
-        echo '<br>';
-                        echo '<b style="font-size: larger;">' . $question[0] . ": " . $question[1] . "</b>";
-                        foreach($options as $option){
-                            echo "<br>";
-                            // echo '<p style="padding-left: 2%;">' . $option[0] . ": " . $option[1];
-                            // if($option[2] == "1"){
-                            //     echo ' (Correct)';
-                            // }
-                            // echo '</p>';
-                            echo '<label style="padding-left: 2%;" for="' . $question[0].$option[0] . '">'. $option[0] . ': ' . $option[1] . '</label>';
-                            echo '<input type="radio" class="' . $question[0].$option[0] . '" name="' . $question[0] . '" value="' . $option[0] . '">';
-            echo '<br>';
-                        }
-                    }
-    echo '<br>';
-                    echo '<input type="submit" value="Submit" name="submitExam" class="submit">';
-                    echo '</form>';
-                    echo '</div>';
-            } else{
-        echo '<b>EXAM CLOSED PLEASE CLICK GO BACK TO RETURN TO THE MAIN PAGE!</b>';
-        echo '
-            <form action="studentFunc.php" method="POST">
-            <input type="submit" name="goBack" class="submitBtn" value="Go Back">
-            </form>
-            ';
-            }
-        }
-    elseif(isset($_POST['checkExam'])){
-        echo '<br>';
-        echo '<div>';
-        $info = getExamInformation($_POST["courseID"], $_POST["examName"]);
-
-        echo "<table>";
-        echo "<tr>";
-        echo "<th>Score</th>";
-        echo "<th>Start Time</th>";
-        echo "<th>End Time</th>";
-        echo "<th>Duration in Seconds</th>";
-        echo "</tr>";
-
-        foreach ($info as $row) {
-            echo "<tr>";
-            echo "<td>" . $row[0] . "</td>";
-            echo "<td>" . $row[1] . "</td>";
-            echo "<td>" . $row[2] . "</td>";
-            echo "<td>" . $row[3] . "</td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-        echo '</div>';
-
-        echo '</br>';
-        echo '</div>';
-
-        echo '<br>';
-        echo '<div>';
-        $exam = reviewExam($_POST["courseID"], $_POST["examName"]);
-
-        echo "<table>";
-        echo "<tr>";
-        echo "<th>Question Number</th>";
-        echo "<th>description</th>";
-        echo "<th>Your Answer</th>";
-        echo "<th>Points Received</th>";
-        echo "<th>Correct Answer</th>";
-        echo "</tr>";
-
-        foreach ($exam as $row) {
-            echo "<tr>";
-            echo "<td>" . $row[0] . "</td>";
-            echo "<td>" . $row[1] . "</td>";
-            echo "<td>" . $row[2] . "</td>";
-            echo "<td>" . $row[3] . "</td>";
-            $correct = getAnswerKey($_POST["courseID"], $_POST["examName"], $row[0]);
-            echo "<td>" . $correct[0] . "</td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-        echo '</div>';
-
-        echo '</br>';
-        echo '</div>';
-        echo '
-            <form action="studentFunc.php" method="POST">
-            <input type="submit" name="goBack" class="submitBtn" value="Go Back">
-            </form>
-            ';
-    }
-
-    ?>
-
-</body>
-</html> 
-
 <?php
     if(isset($_POST["goBack"])){
         header("LOCATION:main.php");
@@ -163,8 +16,6 @@ if (isset($_POST["submitExam"])) {
     try{
         $dbh = connectDB();
 
-        echo $_SESSION["startTime"];
-
         $startTime = date('Y-m-d H:i:s',$_SESSION["startTime"]);
         $endTime = date('Y-m-d H:i:s');
 
@@ -173,15 +24,11 @@ if (isset($_POST["submitExam"])) {
         $studentID = getStudentID();
 
         $statement = $dbh->prepare("
-        INSERT INTO 
-        takes(course_id, exam_name, student_id, start_time, end_time)
-        VALUES
-        (:courseID, :examName, :studentID, :startTime, :endTime)
+        UPDATE takes SET start_time=:startTime, end_time=:endTime 
+        WHERE course_id=:courseID AND exam_name=:examName AND student_id=:studentID
         ");
         echo '<br>';
-        // echo $_SESSION["courseID"] . ":" . $_SESSION["examName"] . ":" .
-        //     $studentID . ":" . $date;
-        //     echo '<br>';
+
         $statement->bindParam(":courseID", $_SESSION["courseID"] );
         $statement->bindParam(":examName", $_SESSION["examName"]);
         $statement->bindParam(":studentID", $studentID);
@@ -197,10 +44,7 @@ if (isset($_POST["submitExam"])) {
             VALUES
             (:courseID, :examName, :questionNum, :answer, :studentID)
             ");
-            //     echo '<br>';
-            // echo $_SESSION["courseID"] . ":" . $_SESSION["examName"] . ":" .
-            // $x . ":" . $_POST[$x] . ":" . $studentID;
-            // echo '<br>';
+
             $statement->bindParam(":courseID", $_SESSION["courseID"]);
             $statement->bindParam(":examName", $_SESSION["examName"]);
             $statement->bindParam(":questionNum", $x);
@@ -214,21 +58,7 @@ if (isset($_POST["submitExam"])) {
         print "Error!" . $e->getMessage() . "<br>";
         die();
     }
-	echo "Your answers are: <br>";
-	foreach (array_keys($_POST) as $x) {
-		if ($x != 'submitExam') {
-			echo $x . ":" . $_POST[$x] . "<br>";
-		}
-	}
-    echo '<br>';
-    echo '
-            <form action="studentFunc.php" method="POST">
-            <input type="submit" name="goBack" class="submitBtn" value="Go Back">
-            </form>
-            ';
-	return;
-    
-    // header("LOCATION:main.php");
+    header("LOCATION:main.php");
 }
 ?>
 
@@ -564,3 +394,145 @@ if (isset($_POST["submitExam"])) {
     }
 
 ?>
+
+<style>
+<?php include 'CSS/main.css'; ?>
+</style>
+
+<!-- <style>
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
+</style> -->
+
+
+
+<?php
+    if (isset($_POST['registerForCourse'])) {
+        registerForCourse($_POST["courseID"]);
+    echo '<div class="formContainer">';
+        echo '<p>You have signed up for, ' . $_POST["courseID"] . '</p>';
+        echo '
+        <form action="studentFunc.php" method="POST">
+        <input type="submit" name="goBack" class="submitBtn" value="Go Back">
+        </form>
+        ';
+    echo '</div>';
+
+    }elseif(isset($_POST['takeExam'])){
+        if(isExamOpen($_POST["courseID"], $_POST["examName"]) == 0){
+            $_SESSION["startTime"] = strtotime(date('Y-m-d H:i:s'));
+            $_SESSION["courseID"] = $_POST["courseID"];
+            $_SESSION["examName"] = $_POST["examName"];
+                
+                    echo '<div class="examContainer">';
+                    echo '<p>Here are questions for ' . $_POST["examName"] . ". Click Submit after you finish";
+                    echo '<br>';
+                    $questions = getQuestions($_POST["courseID"], $_POST["examName"]);
+        
+                    echo '<form action="studentFunc.php" method="POST">';
+                    foreach ($questions as $question) {
+                        $options = getChoices($_POST["courseID"], $_POST["examName"], $question[0]);
+        echo '<br>';
+                        echo '<b style="font-size: larger;">' . $question[0] . ": " . $question[1] . "</b>";
+                        foreach($options as $option){
+                            echo "<br>";
+                            // echo '<p style="padding-left: 2%;">' . $option[0] . ": " . $option[1];
+                            // if($option[2] == "1"){
+                            //     echo ' (Correct)';
+                            // }
+                            // echo '</p>';
+                            echo '<label style="padding-left: 2%;" for="' . $question[0].$option[0] . '">'. $option[0] . ': ' . $option[1] . '</label>';
+                            echo '<input type="radio" class="' . $question[0].$option[0] . '" name="' . $question[0] . '" value="' . $option[0] . '">';
+                echo '<br>';
+                        }
+                    }
+    echo '<br>';
+                    echo '<input type="submit" value="Submit" name="submitExam" class="submitBtn">';
+                    echo '</form>';
+                    echo '</div>';
+            } else{
+        echo '<b>EXAM CLOSED PLEASE CLICK GO BACK TO RETURN TO THE MAIN PAGE!</b>';
+        echo '
+            <form action="studentFunc.php" method="POST">
+            <input type="submit" name="goBack" class="submitBtn" value="Go Back">
+            </form>
+            ';
+            }
+        }
+    elseif(isset($_POST['checkExam'])){
+        echo '<br>';
+        echo '<div class="tableContainer">';
+        $info = getExamInformation($_POST["courseID"], $_POST["examName"]);
+
+        echo "<table>";
+        echo '<thead>';
+        echo "<tr>";
+        echo "<th>Score</th>";
+        echo "<th>Start Time</th>";
+        echo "<th>End Time</th>";
+        echo "<th>Duration in Seconds</th>";
+        echo "</tr>";
+        echo '</thead>';
+
+        echo '<tbody>';
+        foreach ($info as $row) {
+            echo "<tr>";
+            echo "<td>" . $row[0] . "</td>";
+            echo "<td>" . $row[1] . "</td>";
+            echo "<td>" . $row[2] . "</td>";
+            echo "<td>" . $row[3] . "</td>";
+            echo "</tr>";
+        }
+        echo '</tbody>';
+        echo "</table>";
+        echo '</div>';
+
+        echo '</br>';
+
+        echo '<br>';
+        echo '<div class="tableContainer">';
+        $exam = reviewExam($_POST["courseID"], $_POST["examName"]);
+
+        echo "<table>";
+        echo '<thead>';
+        echo "<tr>";
+        echo "<th>Question Number</th>";
+        echo "<th>description</th>";
+        echo "<th>Your Answer</th>";
+        echo "<th>Points Received</th>";
+        echo "<th>Correct Answer</th>";
+        echo "</tr>";
+        echo '</thead>';
+
+        echo '<tbody>';
+        foreach ($exam as $row) {
+            echo "<tr>";
+            echo "<td>" . $row[0] . "</td>";
+            echo "<td>" . $row[1] . "</td>";
+            echo "<td>" . $row[2] . "</td>";
+            echo "<td>" . $row[3] . "</td>";
+            $correct = getAnswerKey($_POST["courseID"], $_POST["examName"], $row[0]);
+            echo "<td>" . $correct[0] . "</td>";
+            echo "</tr>";
+        }
+        echo '</tbody>';
+        echo "</table>";
+        echo '</div>';
+
+        echo '</br>';
+        echo '<div>
+            <form action="studentFunc.php" method="POST">
+            <input type="submit" name="goBack" class="submitBtn" value="Go Back">
+            </form>
+            </div>
+            ';
+    }
+
+    ?>
+
+</body>
+</html> 
+

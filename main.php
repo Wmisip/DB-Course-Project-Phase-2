@@ -1,207 +1,12 @@
 <?php
 require "db.php";
 session_start();
-echo "<pre>";
-print_r($_SESSION);
-print_r($_POST);
-echo "</pre>";
+
 ?>
-
-<style>
-<?php include 'CSS/main.css'; ?>
-</style>
-
-<!-- <style>
-    table,
-    th,
-    td {
-        border: 1px solid black;
-    }
-</style> -->
 
 <html>
 
 <body>
-    <?php
-    if (!isset($_SESSION["username"]) || $_SESSION["enabled"] == "false") {
-        header("LOCATION:login.php");
-    } else {
-        echo '<div>';
-        if ($_SESSION["role"] == "instructor") {
-            echo '<p style="text-align:left"> Welcome instructor, ' . $_SESSION["username"] . '.</p>';
-        } else {
-            echo '<p style="text-align:left"> Welcome student, ' . $_SESSION["username"] . '.</p>';
-        }
-        echo '</div>';
-    }
-    ?>
-        <form action="main.php" method="post">
-            <p style="text-align:left">
-                <input type="submit" name="logout" class="submitBtn" value="Logout">
-            </p>
-        </form>
-    <?php
-    echo "<br/>";
-    echo '<div>';
-    if($_SESSION["role"] == "instructor"){
-        $courses = getTaughtCourses($_SESSION["username"]);
-
-        echo "<table>";
-        echo "<thead>";
-        echo "<tr>";
-        echo "<th>CourseID</th>";
-        echo "<th>Title</th>";
-        echo "<th>Credits</th>";
-        echo "<th>Exam Name</th>";
-        echo "<th>Opened</th>";
-        echo "<th>Closed</th>";
-        echo "<th>Total Points</th>";
-        echo "</tr>";
-        echo "</thead>";
-
-        echo "<tbody>";
-        foreach ($courses as $row) {
-            echo "<tr>";
-            echo "<td>" . $row[0] . "</td>";
-            echo "<td>" . $row[1] . "</td>";
-            echo "<td>" . $row[2] . "</td>";
-            echo "<td>" . $row[3] . "</td>";
-            echo "<td>" . $row[4] . "</td>";
-            echo "<td>" . $row[5] . "</td>";
-            echo "<td>" . $row[6] . "</td>";
-            echo "</tr>";
-        }
-        echo "</tbody>";
-        echo "</table>";
-        echo '</div>';    
-
-        echo '
-            <br>
-            <br>
-            <div>
-            <p>Please enter the CourseID and Exam Name to view the scores of students.</p>
-            
-            <form action="instructorFunc.php" method="POST">
-                <label for="courseID">Course: </label>
-                <input type="text" name="courseID" class="textbox">
-                <br>
-                <label for="examName">Exam: </label>
-                <input type="text" name="examName" class="textbox">
-                <br>
-                <br>
-                <input type="submit" name="checkScore" class="submitBtn" value="Check Score">
-                <input type="submit" name="reviewExam" class="submitBtn" value="Review Exam">
-                <input type="submit" name="createExam" class="submitBtn" value="Create Exam">
-            </form>
-            </div>
-        ';
-        
-    }else{
-        $courses = getCoursesIn($_SESSION["username"]);
-
-        echo "<p>Here are the classes you are taking.</p>";
-
-        echo "<table>";
-        echo "<tr>";
-        echo "<th>CourseID</th>";
-        echo "<th>Title</th>";
-        echo "<th>Credits</th>";
-        echo "<th>Instructor Name</th>";
-        echo "</tr>";
-
-        foreach ($courses as $row) {
-            echo "<tr>";
-            echo "<td>" . $row[0] . "</td>";
-            echo "<td>" . $row[1] . "</td>";
-            echo "<td>" . $row[2] . "</td>";
-            echo "<td>" . $row[3] . "</td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-        echo '</div>';
-
-       /* $exams = getExamsTaken($_SESSION["username"]);*/
-        echo "<p>Here are your exams in each course and your score</p>";
-
-        echo "<table>";
-        echo "<tr>";
-        echo "<th>CourseID</th>";
-        echo "<th>Title</th>";
-        echo "<th>Credits</th>";
-        echo "<th>Exam Name</th>";
-        echo "<th>Total point</th>";
-        echo "<th>Start time</th>";
-        echo "<th>End time</th>";
-        echo "<th>Grade</th>";
-        echo "</tr>";
-
-        foreach ($exams as $row) {
-            echo "<tr>";
-            echo "<td>" . $row[0] . "</td>";
-            echo "<td>" . $row[1] . "</td>";
-            echo "<td>" . $row[2] . "</td>";
-            echo "<td>" . $row[3] . "</td>";
-            echo "<td>" . $row[4] . "</td>";
-            echo "<td>" . $row[5] . "</td>";
-            echo "<td>" . $row[6] . "</td>";
-            echo "<td>" . $row[7] . "</td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-        echo '</div>';
-
-        echo "<p>Here is a list of classes you are not enrolled in</p>";
-        $coursesNotIn = getCoursesNotIn($_SESSION["username"]);
-
-        echo "<table>";
-        echo "<tr>";
-        echo "<th>Course ID</th>";
-        echo "<th>Title</th>";
-        echo "<th>Credits</th>";
-        echo "</tr>";
-
-        foreach ($coursesNotIn as $row) {
-            echo "<tr>";
-            echo "<td>" . $row[0] . "</td>";
-            echo "<td>" . $row[1] . "</td>";
-            echo "<td>" . $row[2] . "</td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-        echo '</div>';
-
-
-        echo '
-            <br>
-            <br>
-            <div>
-            <p>To register new courses, type course id then click Register New Course</p>
-            <p>To take an exam, type course id and exam name then click Take Exam</p>
-            <p>To check an exam score, type course id then click Check Score</p>
-            
-            <form action="studentFunc.php" method="POST">
-                <label for="courseID">Course: </label>
-                <input type="text" name="courseID" id="textbox" value="courseID">
-                <br>
-                <label for="examName">Exam: </label>
-                <input type="text" name="examName" id="textbox" value="examName">
-                <br>
-                <br>
-                <input type="submit" name= "registerForCourse" class="submitBtn" value="Register New Course">
-                <input type="submit" name= "takeExam" class="submitBtn" value="Take Exam">
-                <input type="submit" name= "checkExam" class="submitBtn" value="Check Score">
-            </form>
-            </div>
-        ';
-        
-        
-    }
-    ?>
-
-    <br>
-</body>
-
-</html>
 
 <?php
     function getTaughtCourses($username){
@@ -266,22 +71,22 @@ echo "</pre>";
         }
     }
 
-    function getExams($username) {
+    function getExamsTaken($username) {
         try {
             $dbh = connectDB();
 
         $statement = $dbh->prepare("SELECT 
         course.course_id, 
-        course.course_name, 
-        course.credits, 
         exam.exam_name,
+        exam.open,
+        exam.closed, 
         exam.total_points,
-        takes.start_time,
+        takes.start_time, 
         takes.end_time, 
         takes.grade
         FROM student 
         natural join takes natural join course natural join exam
-            WHERE student.account_name LIKE :username ORDER BY course.course_id ASC");
+            WHERE student.account_name LIKE :username ORDER BY course.course_id ASC, exam_name ASC");
 
         $statement->bindParam(":username", $username);
         $statement->execute();
@@ -325,7 +130,7 @@ echo "</pre>";
                 register
                     NATURAL JOIN
                 course)
-    ;    "); // query broken
+        "); // query broken
     // array to string conversion notice, doesn't seem to be a problem but shows up on web page
         $statement->bindParam(":studentID", $studentID[0]);
         $statement->execute();
@@ -368,4 +173,219 @@ if (isset($_POST["logout"])) {
 
     
 ?>
+
+<style>
+<?php include 'CSS/main.css'; ?>
+</style>
+
+<!-- <style>
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
+</style> -->
+
+
+    <?php
+    if (!isset($_SESSION["username"]) || $_SESSION["enabled"] == "false") {
+        header("LOCATION:login.php");
+    } else {
+        echo '<div class="logoutContainer">';
+        if ($_SESSION["role"] == "instructor") {
+            echo '<p style="text-align:left"> Welcome instructor, ' . $_SESSION["username"] . '</p>';
+        } else {
+            echo '<p style="text-align:left"> Welcome student, ' . $_SESSION["username"] . '</p>';
+        }
+    }
+    ?>
+        <form action="main.php" method="post">
+                <input type="submit" name="logout" class="submitBtn" value="Logout">
+        </form>
+    </div>
+
+    <?php
+    echo '<br>';
+    echo '<br>';
+    if($_SESSION["role"] == "instructor"){
+        $courses = getTaughtCourses($_SESSION["username"]);
+        echo '<div class="tableContainer">';
+
+        echo "<b>Here are the courses your're teaching and the exams you've created for them</b><br><br>";
+
+        echo "<table>";
+        echo "<thead>";
+        echo "<tr>";
+        echo "<th>CourseID</th>";
+        echo "<th>Title</th>";
+        echo "<th>Credit</th>";
+        echo "<th>Exam Name</th>";
+        echo "<th>Opened</th>";
+        echo "<th>Closed</th>";
+        echo "<th>Total Points</th>";
+        echo "</tr>";
+        echo "</thead>";
+
+        echo "<tbody>";
+        foreach ($courses as $row) {
+            echo "<tr>";
+            echo "<td>" . $row[0] . "</td>";
+            echo "<td>" . $row[1] . "</td>";
+            echo "<td>" . $row[2] . "</td>";
+            echo "<td>" . $row[3] . "</td>";
+            echo "<td>" . $row[4] . "</td>";
+            echo "<td>" . $row[5] . "</td>";
+            echo "<td>" . $row[6] . "</td>";
+            echo "</tr>";
+        }
+        echo "</tbody>";
+        echo "</table>";
+        echo '</div>';    
+
+        echo '<br>';
+        echo '<br>';
+
+        echo '<br>
+            <div class="formContainer">
+            <p>Please enter the CourseID and Exam Name to view the scores of students.</p>
+
+            <form action="instructorFunc.php" method="POST">
+                <label class="textLabel" class="textLabel" for="courseID">Course: </label><br>
+                <input type="text" name="courseID" class="textInput" placeholder="Course ID">
+                <br><br>
+                <label class="textLabel" for="examName">Exam: </label><br>
+                <input type="text" name="examName" class="textInput" placeholder="Exam Name">
+                <br>
+                <br>
+                <input type="submit" name="checkScore" class="submitBtn" value="Check Score">
+                <input type="submit" name="reviewExam" class="submitBtn" value="Review Exam">
+                <input type="submit" name="createExam" class="submitBtn" value="Create Exam">
+            </form>
+            </div>
+        ';
+
+    } else {
+        $courses = getCoursesIn($_SESSION["username"]);
+
+        echo '<div class="tableContainer">';
+        echo "<b>Here are the classes you are taking.</b><br><br>";
+        echo "<table>";
+        echo '<thead>';
+        echo "<tr>";
+        echo "<th>CourseID</th>";
+        echo "<th>Title</th>";
+        echo "<th>Credits</th>";
+        echo "<th>Instructor Name</th>";
+        echo "</tr>";
+        echo '</thead>';
+
+        echo '<tbody>';
+        foreach ($courses as $row) {
+            echo "<tr>";
+            echo "<td>" . $row[0] . "</td>";
+            echo "<td>" . $row[1] . "</td>";
+            echo "<td>" . $row[2] . "</td>";
+            echo "<td>" . $row[3] . "</td>";
+            echo "</tr>";
+        }
+        echo '</tbody>';
+        echo "</table>";
+        echo '</div>';
+
+        echo '<br>';
+        echo '<br>';
+
+        $exams = getExamsTaken($_SESSION["username"]);
+        echo '<div class="tableContainer">';
+
+        echo "<b>Here are your exams in each course and your score</b><br><br>";
+
+        echo "<table>";
+        echo '<thead>';
+        echo "<tr>";
+        echo "<th>CourseID</th>";
+        echo "<th>Exam Name</th>";
+        echo "<th>Open</th>";
+        echo "<th>Closed</th>";
+        echo "<th>Total point</th>";
+        echo "<th>Start time</th>";
+        echo "<th>End time</th>";
+        echo "<th>Grade</th>";
+        echo "</tr>";
+        echo '</thead>';
+
+        echo '<tbody>';
+        foreach ($exams as $row) {
+            echo "<tr>";
+            echo "<td>" . $row[0] . "</td>";
+            echo "<td>" . $row[1] . "</td>";
+            echo "<td>" . $row[2] . "</td>";
+            echo "<td>" . $row[3] . "</td>";
+            echo "<td>" . $row[4] . "</td>";
+            echo "<td>" . $row[5] . "</td>";
+            echo "<td>" . $row[6] . "</td>";
+            echo "<td>" . $row[7] . "</td>";
+            echo "</tr>";
+        }
+        echo '</tbody>';
+        echo "</table>";
+        echo '</div>';
+
+        echo '<br>';
+        echo '<br>';
+
+        $coursesNotIn = getCoursesNotIn($_SESSION["username"]);
+
+        echo '<div class="tableContainer">';
+        echo "<b>Here is a list of classes you are not enrolled in</b><br><br>";
+        echo "<table>";
+        echo '<thead>';
+        echo "<tr>";
+        echo "<th>Course ID</th>";
+        echo "<th>Title</th>";
+        echo "<th>Credits</th>";
+        echo "</tr>";
+        echo '</thead>';
+
+        echo '<tbody>';
+        foreach ($coursesNotIn as $row) {
+            echo "<tr>";
+            echo "<td>" . $row[0] . "</td>";
+            echo "<td>" . $row[1] . "</td>";
+            echo "<td>" . $row[2] . "</td>";
+            echo "</tr>";
+        }
+        echo '</tbody>';
+        echo "</table>";
+        echo '</div>';
+
+        echo '<br>';
+        echo '<br>
+        <div class="formContainer">
+        <p>To register new courses, type course id then click Register New Course</p>
+        <p>To take an exam, type course id and exam name then click Take Exam</p>
+        <p>To check an exam score, type course id then click Check Score</p>
+        <form action="studentFunc.php" method="POST">
+        <label class="textLabel" for="courseID">Course: </label><br>
+            <input type="text" name="courseID" class="textInput" placeholder="Course ID">
+            <br><br>
+            <label class="textLabel" for="examName">Exam: </label><br>
+            <input type="text" name="examName" class="textInput" placeholder="Exam Name">
+            <br>
+            <br>
+            <input type="submit" name= "registerForCourse" class="submitBtn" value="Register New Course">
+            <input type="submit" name= "takeExam" class="submitBtn" value="Take Exam">
+            <input type="submit" name= "checkExam" class="submitBtn" value="Check Score">
+        </form>
+        </div>
+    ';
+    }
+    ?>
+
+    <br>
+</body>
+
+</html>
+
+
 
